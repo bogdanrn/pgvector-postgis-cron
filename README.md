@@ -1,4 +1,4 @@
-# pgvector-postgis
+# pgvector-postgis-cron
 
 Custom PostgreSQL 18 image with:
 
