@@ -36,6 +36,11 @@ worker on every outbound call, so it is not used.
     `fatal error: unicode/ucol.h: No such file or directory`.
 - Runtime dependency: `libcurl4` — the compiled `pg_net.so` links
   `libcurl.so.4`. Must be present in the final image.
+- Runtime dependency: `ca-certificates` — the base image ships **no** CA
+  bundle (`/etc/ssl/certs/ca-certificates.crt` is absent). Without it, every
+  pg_net HTTPS request fails with `Problem with the SSL CA cert`. Must be
+  installed in the final stage (verified: adding it makes `https://example.com`
+  return `200`).
 - Install produces three artifacts under the PG18 tree:
   - `/usr/lib/postgresql/18/lib/pg_net.so`
   - `/usr/share/postgresql/18/extension/pg_net.control`
@@ -73,6 +78,7 @@ RUN apt-get update \
       postgresql-18-postgis-3 \
       postgresql-18-postgis-3-scripts \
       postgresql-18-cron \
+      ca-certificates \
       libcurl4 \
  && rm -rf /var/lib/apt/lists/*
 COPY --from=build /usr/lib/postgresql/18/lib/pg_net.so \
